@@ -265,12 +265,13 @@ public class ShopeeAPIV2Service {
 	}
 
 
-	public UpdateItemResponse updateItem(long categoryId, String name, String description, double weight, List<Long> logistics) throws Exception {
+	public UpdateItemResponse updateItem(long id, long categoryId, String name, String description, double weight, List<Long> logistics) throws Exception {
 		String path = URL_VERSION + "/product/update_item";
 		String url = endpoint + path;
 		long timestamp = System.currentTimeMillis() / 1000L;
 
 		UpdateItemRequest request = new UpdateItemRequest();
+		request.id = id;
 		request.categoryId = categoryId;
 		request.name = name;
 		request.description = description;
@@ -290,6 +291,8 @@ public class ShopeeAPIV2Service {
 		params.put("access_token", getCurrentAccessToken());
 		params.put("shop_id", SHOP_ID + "");
 		url = generateShopUrl(url, path, timestamp, params);
+		log.info("UpdateItem@url: " + url);
+		log.info("UpdateItem@rq: " + gson.toJson(request));
 		return performPostRequest(url, gson.toJson(request), UpdateItemResponse.class);
 	}
 

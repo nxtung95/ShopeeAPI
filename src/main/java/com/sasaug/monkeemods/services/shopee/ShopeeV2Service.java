@@ -178,7 +178,7 @@ public class ShopeeV2Service {
 	}
 
 
-	public UpdateItemResponseModel updateItem(String name, String description, double weight, int length, int width, int height, String brand, List<String> images) throws Exception {
+	public UpdateItemResponseModel updateItem(Long itemId, String name, String description, double weight, int length, int width, int height, String brand, List<String> images) throws Exception {
 
 
 		List<Long> logistics = new ArrayList<>();
@@ -192,14 +192,15 @@ public class ShopeeV2Service {
 		if (name.length() < 20) {
 			name = name + " - Monkee Mods";
 		}
-		UpdateItemResponse resp = shopeeAPIV2Service.updateItem(categoryId, name, description, weight, logistics);
+		UpdateItemResponse resp = shopeeAPIV2Service.updateItem(itemId, categoryId, name, description, weight, logistics);
+		log.info("updateItem@res: " + gson.toJson(resp));
 		if (resp.error == null || resp.error.isEmpty()) {
 			return resp.getResponse();
 		}
 		return null;
 	}
 
-	public UpdateItemResponseModel unlistItem(String name, String description, double weight, int length, int width, int height, String brand, List<String> images) throws Exception {
+	public UpdateItemResponseModel unlistItem(Long itemId, String name, String description, double weight, int length, int width, int height, String brand, List<String> images) throws Exception {
 
 
 		List<Long> logistics = new ArrayList<>();
@@ -213,7 +214,7 @@ public class ShopeeV2Service {
 		if (name.length() < 20) {
 			name = name + " - Monkee Mods";
 		}
-		UpdateItemResponse resp = shopeeAPIV2Service.updateItem(categoryId, name, description, weight, logistics);
+		UpdateItemResponse resp = shopeeAPIV2Service.updateItem(itemId, categoryId, name, description, weight, logistics);
 		if (resp.error == null || resp.error.isEmpty()) {
 			return resp.getResponse();
 		}
