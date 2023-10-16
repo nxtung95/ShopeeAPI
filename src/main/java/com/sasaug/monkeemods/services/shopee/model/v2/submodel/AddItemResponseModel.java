@@ -1,11 +1,11 @@
 package com.sasaug.monkeemods.services.shopee.model.v2.submodel;
 
-import java.util.List;
-
 import com.google.gson.annotations.SerializedName;
-import com.sasaug.monkeemods.services.shopee.model.v2.ItemPriceInfo;
+import com.sasaug.monkeemods.services.shopee.model.v2.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -24,14 +24,31 @@ public class AddItemResponseModel {
 	@SerializedName(value = "item_sku")
 	public String itemSku;
 
-	public String weight;
+	public int weight;
 
-	public List<AddItemResponseImageModel> images;
-
-	@SerializedName(value = "item_status")
-	public String status;
+	public AddItemResponseImageModel images;
 
 	@SerializedName(value = "price_info")
-	public List<ItemPriceInfo> priceInfo;
+	public ItemPriceInfo priceInfo;
 
+	private Dimension dimension;
+
+	@SerializedName("logistic_info")
+	private List<LogisticInfo> logisticInfoList;
+
+	@SerializedName("pre_order")
+	private PreOrder preOrder;
+
+	private String condition;
+
+	@SerializedName("item_status")
+	private String itemStatus;
+
+	private AddBrandInfo brand;
+
+	@SerializedName("description_type")
+	private String descriptionType;
+
+	@SerializedName("seller_stock")
+	private List<SellerStock> sellerStocks;
 }

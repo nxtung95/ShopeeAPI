@@ -159,17 +159,17 @@ public class ShopeeV2Service {
 
 	public AddItemResponseModel addItem(String name, String description, long sku, double price, int stock, double weight, int length, int width, int height, String brand, List<String> images) throws Exception {
 		List<Long> logistics = new ArrayList<>();
-		List<AddItemAttribute> attributes = new ArrayList<>();
-		AddItemAttribute attr = new AddItemAttribute();
-		attr.setId(100002);
-//		attr.setValue(brand);
-		attributes.add(attr);
+//		List<AddItemAttribute> attributes = new ArrayList<>();
+//		AddItemAttribute attr = new AddItemAttribute();
+//		attr.setId(100002);
+////		attr.setValue(brand);
+//		attributes.add(attr);
 		logistics.add(logisticId);
 
 		if (name.length() < 20) {
 			name = name + " - Monkee Mods";
 		}
-		AddItemResponse resp = shopeeAPIV2Service.addItem(categoryId, name, description, sku + "", price, stock, weight, length, width, height, images, logistics, attributes);
+		AddItemResponse resp = shopeeAPIV2Service.addItem(categoryId, name, description, sku + "", price, stock, weight, length, width, height, images, logistics);
 		log.info("addItem@res: " + gson.toJson(resp));
 		if (resp.error == null || resp.error.isEmpty()) {
 			return resp.getResponse();

@@ -9,5 +9,6 @@ public class BaseResponse {
 	public String requestId;
 
 	public String error;
+	public String warning;
 	public String message;
 }

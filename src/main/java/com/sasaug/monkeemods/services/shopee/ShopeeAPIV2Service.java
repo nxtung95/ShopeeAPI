@@ -220,7 +220,7 @@ public class ShopeeAPIV2Service {
 	}
 
 
-	public AddItemResponse addItem(long categoryId, String name, String description, String sku, double price, int stock, double weight, int length, int width, int height, List<String> images, List<Long> logistics, List<AddItemAttribute> attributes) throws Exception {
+	public AddItemResponse addItem(long categoryId, String name, String description, String sku, double price, int stock, double weight, int length, int width, int height, List<String> images, List<Long> logistics) throws Exception {
 		String path = URL_VERSION + "/product/add_item";
 		String url = endpoint + path;
 		long timestamp = System.currentTimeMillis() / 1000L;
@@ -255,24 +255,12 @@ public class ShopeeAPIV2Service {
 			request.logistics.add(logisticInfo);
 		}
 
-		AddItemAttributeValueModel addItemAttributeValueModel = new AddItemAttributeValueModel();
-		addItemAttributeValueModel.valueId = 0;
-		addItemAttributeValueModel.originalValueName= "Aquarium Decoration Type";
-
-		List<AddItemAttributeValueModel> list = new ArrayList<>();
-		list.add(addItemAttributeValueModel);
-
-		for (AddItemAttribute attribute : attributes) {
-			AddItemAttributeModel addItemAttributeModel = new AddItemAttributeModel();
-			addItemAttributeModel.setAttributeId(attribute.getId());
-			addItemAttributeModel.setAttributeValues(list);
-			request.attributes.add(addItemAttributeModel);
-		}
-
 		Map<String, String> params = new HashMap<>();
 		params.put("access_token", getCurrentAccessToken());
 		params.put("shop_id", SHOP_ID + "");
 		url = generateShopUrl(url, path, timestamp, params);
+		log.info("AddItem@url: " + url);
+		log.info("AddItem@rq: " + gson.toJson(request));
 		return performPostRequest(url, gson.toJson(request), AddItemResponse.class);
 	}
 
