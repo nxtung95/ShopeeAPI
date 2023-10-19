@@ -4,10 +4,8 @@ import com.sasaug.monkeemods.services.shopee.ShopeeV2Service;
 import com.sasaug.monkeemods.services.shopee.model.v2.Category;
 import com.sasaug.monkeemods.services.shopee.model.v2.ItemBase;
 import com.sasaug.monkeemods.services.shopee.model.v2.ItemList;
-import com.sasaug.monkeemods.services.shopee.model.v2.submodel.AddItemResponseModel;
-import com.sasaug.monkeemods.services.shopee.model.v2.submodel.GetAllLogisticsChannelModel;
-import com.sasaug.monkeemods.services.shopee.model.v2.submodel.UnlistItemResponseModel;
-import com.sasaug.monkeemods.services.shopee.model.v2.submodel.UpdateItemResponseModel;
+import com.sasaug.monkeemods.services.shopee.model.v2.response.DeleteItemResponse;
+import com.sasaug.monkeemods.services.shopee.model.v2.submodel.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -81,6 +79,24 @@ public class ShoppeeApiController {
 		Map<Long,Boolean> unlistItems = new HashMap<>();
 		Arrays.stream(rq.getUnlistItems().split(",")).forEach(item -> unlistItems.put(Long.parseLong(item), false));
 		UnlistItemResponseModel res = shopeeV2Service.unlistItem(unlistItems);
+		return ResponseEntity.ok(res);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/delete-item")
+	public ResponseEntity<Long> deleteItem(@RequestBody UnlistItemRequest rq) throws Exception {
+		Long res = shopeeV2Service.removeItem(Long.parseLong(rq.unlistItems));
+		return ResponseEntity.ok(res);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/update-item-price")
+	public ResponseEntity<UpdatePriceItemResponseModel> updateItemPrice(@RequestBody ItemRequest rq) throws Exception {
+		UpdatePriceItemResponseModel res = shopeeV2Service.updateItemPrice(rq.itemId, rq.modelId, rq.price);
+		return ResponseEntity.ok(res);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/update-item-stock")
+	public ResponseEntity<UpdateStockResponseModel> updateItemStock(@RequestBody ItemRequest rq) throws Exception {
+		UpdateStockResponseModel res = shopeeV2Service.updateItemStock(rq.itemId, rq.modelId, rq.getQuantity());
 		return ResponseEntity.ok(res);
 	}
 }

@@ -1,33 +1,14 @@
 package com.sasaug.monkeemods.services.shopee;
 
 import com.google.gson.Gson;
-//import com.sasaug.monkeemods.helpers.JedisHelper;
 import com.sasaug.monkeemods.services.shopee.helper.JedisHelper;
 import com.sasaug.monkeemods.services.shopee.helper.RequestHelperV2;
 import com.sasaug.monkeemods.services.shopee.helper.RequestUrlBuilder;
-import com.sasaug.monkeemods.services.shopee.model.v1.AddItemAttribute;
-import com.sasaug.monkeemods.services.shopee.model.v1.request.GetOrdersByStatusRequest;
-import com.sasaug.monkeemods.services.shopee.model.v2.BrandInfo;
-import com.sasaug.monkeemods.services.shopee.model.v2.Dropoff;
-import com.sasaug.monkeemods.services.shopee.model.v2.LogisticInfo;
-import com.sasaug.monkeemods.services.shopee.model.v2.Model;
-import com.sasaug.monkeemods.services.shopee.model.v2.TierVariation;
-import com.sasaug.monkeemods.services.shopee.model.v2.UnlistItem;
+import com.sasaug.monkeemods.services.shopee.model.v2.*;
 import com.sasaug.monkeemods.services.shopee.model.v2.enumeration.ItemStatus;
 import com.sasaug.monkeemods.services.shopee.model.v2.enumeration.OrderStatus;
-import com.sasaug.monkeemods.services.shopee.model.v2.request.AddItemRequest;
-import com.sasaug.monkeemods.services.shopee.model.v2.request.CreateShippingDocumentRequest;
-import com.sasaug.monkeemods.services.shopee.model.v2.request.DeleteItemRequest;
-import com.sasaug.monkeemods.services.shopee.model.v2.request.GetOrderDetailsRequest;
-import com.sasaug.monkeemods.services.shopee.model.v2.request.InitTierVariationRequest;
-import com.sasaug.monkeemods.services.shopee.model.v2.request.ShipOrderRequest;
-import com.sasaug.monkeemods.services.shopee.model.v2.request.UnlistItemRequest;
-import com.sasaug.monkeemods.services.shopee.model.v2.request.UpdateItemPriceRequest;
-import com.sasaug.monkeemods.services.shopee.model.v2.request.UpdateItemRequest;
-import com.sasaug.monkeemods.services.shopee.model.v2.request.UpdateItemStockRequest;
+import com.sasaug.monkeemods.services.shopee.model.v2.request.*;
 import com.sasaug.monkeemods.services.shopee.model.v2.response.*;
-import com.sasaug.monkeemods.services.shopee.model.v2.request.GetAccessTokenRequest;
-import com.sasaug.monkeemods.services.shopee.model.v2.request.RefreshAccessTokenRequest;
 import com.sasaug.monkeemods.services.shopee.model.v2.submodel.*;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -38,13 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.io.File;
-import java.util.jar.Attributes;
 
 @Service
 @Slf4j
@@ -333,8 +313,9 @@ public class ShopeeAPIV2Service {
 		return performPostRequest(url, gson.toJson(request), UnlistItemResponse.class);
 	}
 
-	public DeleteItemResponse deleteItem(long itemId) {
+	public DeleteItemResponse deleteItem(long itemId) throws Exception {
 		String path = URL_VERSION + "/product/delete_item";
+		long timestamp = System.currentTimeMillis() / 1000L;
 		String url = endpoint + path;
 
 		DeleteItemRequest request = new DeleteItemRequest();
@@ -342,29 +323,44 @@ public class ShopeeAPIV2Service {
 		request.setPartnerId(PARTNER_ID);
 		request.setItemId(itemId);
 
+		Map<String, String> params = new HashMap<>();
+		params.put("access_token", getCurrentAccessToken());
+		url = generateShopUrl(url, path, timestamp, params);
 		return performPostRequest(url, gson.toJson(request), DeleteItemResponse.class);
 	}
 
-	public UpdateStockResponse updateItemStock(long itemId, long modelId, int stock) {
+	public UpdateStockResponse updateItemStock(long itemId, long modelId, int stock) throws Exception {
 		String path = URL_VERSION + "/product/update_stock";
 		String url = endpoint + path;
+		long timestamp = System.currentTimeMillis() / 1000L;
 
 		UpdateItemStockRequest request = new UpdateItemStockRequest();
 		request.setShopId(SHOP_ID);
 		request.setPartnerId(PARTNER_ID);
+		request.setId(itemId);
 
 		UpdateStockStockListModel m = new UpdateStockStockListModel();
 		if (modelId > 0) {
 			m.setId(modelId);
 		}
-		m.setStock(stock);
+		List<SellerStock> sellerStocks = new ArrayList<>();
+		SellerStock sellerStock = new SellerStock();
+		sellerStock.setStock(stock);
+		sellerStocks.add(sellerStock);
+		m.setSellerStock(sellerStocks);
 		request.getStockList().add(m);
 
-		return performPostRequest(url, gson.toJson(request), UpdateStockResponse.class);
+		Map<String, String> params = new HashMap<>();
+		params.put("access_token", getCurrentAccessToken());
+		url = generateShopUrl(url, path, timestamp, params);
+
+		UpdateStockResponse res =  performPostRequest(url, gson.toJson(request), UpdateStockResponse.class);
+		return res;
 	}
 
-	public UpdateItemPriceResponse updateItemPrice(long itemId, long modelId, double price) {
+	public UpdateItemPriceResponse updateItemPrice(long itemId, long modelId, double price) throws Exception {
 		String path = URL_VERSION + "/product/update_price";
+		long timestamp = System.currentTimeMillis() / 1000L;
 		String url = endpoint + path;
 
 		UpdateItemPriceRequest request = new UpdateItemPriceRequest();
@@ -379,9 +375,12 @@ public class ShopeeAPIV2Service {
 		m.setPrice(price);
 		request.getPriceList().add(m);
 
+		Map<String, String> params = new HashMap<>();
+		params.put("access_token", getCurrentAccessToken());
+		url = generateShopUrl(url, path, timestamp, params);
+
 		return performPostRequest(url, gson.toJson(request), UpdateItemPriceResponse.class);
 	}
-
 
 	/*
 	 * Orders

@@ -9,6 +9,8 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.sasaug.monkeemods.services.shopee.model.v1.AddItemAttribute;
+import com.sasaug.monkeemods.services.shopee.model.v1.ItemData;
+import com.sasaug.monkeemods.services.shopee.model.v1.response.UpdateItemStockResponse;
 import com.sasaug.monkeemods.services.shopee.model.v2.*;
 import com.sasaug.monkeemods.services.shopee.model.v2.enumeration.ItemStatus;
 import com.sasaug.monkeemods.services.shopee.model.v2.response.*;
@@ -200,6 +202,15 @@ public class ShopeeV2Service {
 		return null;
 	}
 
+	public long removeItem(long id) throws Exception {
+		DeleteItemResponse resp = shopeeAPIV2Service.deleteItem(id);
+		if (resp.error == null || resp.error.isEmpty()) {
+			resp.itemId = id;
+			return resp.itemId;
+		}
+		return -1;
+	}
+
 	public UnlistItemResponseModel unlistItem(Map<Long, Boolean> mapItem) throws Exception {
 
 		UnlistItemResponse resp = shopeeAPIV2Service.unlistItem(mapItem);
@@ -209,6 +220,21 @@ public class ShopeeV2Service {
 		return null;
 	}
 
+	public UpdatePriceItemResponseModel updateItemPrice(long itemId, long modelId, double price) throws Exception {
+		UpdateItemPriceResponse resp = shopeeAPIV2Service.updateItemPrice(itemId, modelId, price);
+		if (resp.error == null || resp.error.isEmpty()) {
+			return resp.getResponse();
+		}
+		return null;
+	}
+
+	public UpdateStockResponseModel updateItemStock(long itemId, long modelId, int quantity) throws Exception {
+		UpdateStockResponse resp = shopeeAPIV2Service.updateItemStock(itemId, modelId, quantity);
+		if (resp.error == null || resp.error.isEmpty()) {
+			return resp.getResponse();
+		}
+		return null;
+	}
 
 	//MEDIA SPACE
 //	public AddImageResponseModel uploadImage(String url) throws Exception {

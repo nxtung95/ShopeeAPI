@@ -11,7 +11,7 @@ public class UpdateStockResponseSuccessModel {
 	public long modelId;
 
 	@SerializedName(value = "location_id")
-	public int locationId;
+	public String locationId;
 
 	public int stock;
 
