@@ -10,4 +10,6 @@ public class BaseResponse {
 
 	public String error;
 	public String msg;
+	public String warning;
+	public String message;
 }

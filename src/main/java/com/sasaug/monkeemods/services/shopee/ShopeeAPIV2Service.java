@@ -309,8 +309,9 @@ public class ShopeeAPIV2Service {
 		return performPostRequest(url, gson.toJson(request), InitTierVariationResponse.class);
 	}
 
-	public UnlistItemResponse unlistItem(Map<Long, Boolean> map) {
+	public UnlistItemResponse unlistItem(Map<Long, Boolean> map) throws Exception {
 		String path = URL_VERSION + "/product/unlist_item";
+		long timestamp = System.currentTimeMillis() / 1000L;
 		String url = endpoint + path;
 
 		UnlistItemRequest request = new UnlistItemRequest();
@@ -323,6 +324,11 @@ public class ShopeeAPIV2Service {
 			unlistItem.setUnlist(entry.getValue());
 			request.getItems().add(unlistItem);
 		}
+
+		Map<String, String> params = new HashMap<>();
+		params.put("access_token", getCurrentAccessToken());
+
+		url = generateShopUrl(url, path, timestamp, params);
 
 		return performPostRequest(url, gson.toJson(request), UnlistItemResponse.class);
 	}

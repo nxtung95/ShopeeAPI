@@ -6,6 +6,7 @@ import com.sasaug.monkeemods.services.shopee.model.v2.ItemBase;
 import com.sasaug.monkeemods.services.shopee.model.v2.ItemList;
 import com.sasaug.monkeemods.services.shopee.model.v2.submodel.AddItemResponseModel;
 import com.sasaug.monkeemods.services.shopee.model.v2.submodel.GetAllLogisticsChannelModel;
+import com.sasaug.monkeemods.services.shopee.model.v2.submodel.UnlistItemResponseModel;
 import com.sasaug.monkeemods.services.shopee.model.v2.submodel.UpdateItemResponseModel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -70,6 +73,14 @@ public class ShoppeeApiController {
 	public ResponseEntity<UpdateItemResponseModel> updateItem(@RequestBody UpdateItemRequest rq) throws Exception {
 		UpdateItemResponseModel res = shopeeV2Service.updateItem(rq.getItemId(), rq.getName(), rq.getDescription(), rq.getWeight(),
 				rq.getLength(), rq.getWidth(), rq.getHeight(), rq.getBrand(), Arrays.asList(rq.getImages().split(",")).stream().toList());
+		return ResponseEntity.ok(res);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/unlist-item")
+	public ResponseEntity<UnlistItemResponseModel> unlistItem(@RequestBody UnlistItemRequest rq) throws Exception {
+		Map<Long,Boolean> unlistItems = new HashMap<>();
+		Arrays.stream(rq.getUnlistItems().split(",")).forEach(item -> unlistItems.put(Long.parseLong(item), false));
+		UnlistItemResponseModel res = shopeeV2Service.unlistItem(unlistItems);
 		return ResponseEntity.ok(res);
 	}
 }

@@ -200,21 +200,9 @@ public class ShopeeV2Service {
 		return null;
 	}
 
-	public UpdateItemResponseModel unlistItem(Long itemId, String name, String description, double weight, int length, int width, int height, String brand, List<String> images) throws Exception {
+	public UnlistItemResponseModel unlistItem(Map<Long, Boolean> mapItem) throws Exception {
 
-
-		List<Long> logistics = new ArrayList<>();
-		List<AddItemAttribute> attributes = new ArrayList<>();
-		AddItemAttribute attr = new AddItemAttribute();
-		attr.setId(0);
-		attr.setValue(brand);
-		attributes.add(attr);
-		logistics.add(logisticId);
-
-		if (name.length() < 20) {
-			name = name + " - Monkee Mods";
-		}
-		UpdateItemResponse resp = shopeeAPIV2Service.updateItem(itemId, categoryId, name, description, weight, logistics);
+		UnlistItemResponse resp = shopeeAPIV2Service.unlistItem(mapItem);
 		if (resp.error == null || resp.error.isEmpty()) {
 			return resp.getResponse();
 		}
