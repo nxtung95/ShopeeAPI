@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
-import com.sasaug.monkeemods.services.shopee.model.v1.Address;
-import com.sasaug.monkeemods.services.shopee.model.v1.OrderBasic;
-import com.sasaug.monkeemods.services.shopee.model.v1.OrderItem;
+import com.sasaug.monkeemods.services.shopee.model.v2.*;
 import lombok.Getter;
 import lombok.Setter;
 

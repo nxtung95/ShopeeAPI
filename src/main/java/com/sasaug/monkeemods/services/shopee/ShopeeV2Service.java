@@ -2,7 +2,6 @@ package com.sasaug.monkeemods.services.shopee;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
-import com.sasaug.monkeemods.services.shopee.model.v1.AddItemAttribute;
 import com.sasaug.monkeemods.services.shopee.model.v2.*;
 import com.sasaug.monkeemods.services.shopee.model.v2.enumeration.ItemStatus;
 import com.sasaug.monkeemods.services.shopee.model.v2.enumeration.OrderStatus;
@@ -30,9 +29,6 @@ public class ShopeeV2Service {
 	private long categoryId = 102079;
 //	private long logisticId = 2000; //standard
 	private long logisticId = 20088;
-
-	@Autowired
-	ShopeeAPIService shopeeAPIService;
 
 	@Autowired
 	ShopeeAPIV2Service shopeeAPIV2Service;

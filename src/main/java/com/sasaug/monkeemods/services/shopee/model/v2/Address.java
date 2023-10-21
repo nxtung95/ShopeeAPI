@@ -1,4 +1,4 @@
-package com.sasaug.monkeemods.services.shopee.model.v1;
+package com.sasaug.monkeemods.services.shopee.model.v2;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
