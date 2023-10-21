@@ -276,17 +276,42 @@ public class ShopeeAPIV2Service {
 		return performPostRequest(url, gson.toJson(request), UpdateItemResponse.class);
 	}
 
-	public InitTierVariationResponse initItemTierVariation(List<TierVariation> tierVariations, List<Model> models) {
+	public TierVariationResponse initItemTierVariation(Long itemId, List<TierVariation> tierVariations, List<Model> models) throws Exception {
 		String path = URL_VERSION + "/product/init_tier_variation";
 		String url = endpoint + path;
+		long timestamp = System.currentTimeMillis() / 1000L;
 
-		InitTierVariationRequest request = new InitTierVariationRequest();
+		TierVariationRequest request = new TierVariationRequest();
+		request.setShopId(SHOP_ID);
+		request.setPartnerId(PARTNER_ID);
+		request.setItemId(itemId);
+		request.setTierVariationList(tierVariations);
+		request.setModelList(models);
+
+		Map<String, String> params = new HashMap<>();
+		params.put("access_token", getCurrentAccessToken());
+		url = generateShopUrl(url, path, timestamp, params);
+
+		return performPostRequest(url, gson.toJson(request), TierVariationResponse.class);
+	}
+
+	public TierVariationResponse updateItemTierVariation(Long itemId, List<TierVariation> tierVariations, List<Model> models) throws Exception {
+		String path = URL_VERSION + "/product/update_tier_variation";
+		String url = endpoint + path;
+		long timestamp = System.currentTimeMillis() / 1000L;
+
+		TierVariationRequest request = new TierVariationRequest();
 		request.setShopId(SHOP_ID);
 		request.setPartnerId(PARTNER_ID);
 		request.setTierVariationList(tierVariations);
 		request.setModelList(models);
+		request.setItemId(itemId);
 
-		return performPostRequest(url, gson.toJson(request), InitTierVariationResponse.class);
+		Map<String, String> params = new HashMap<>();
+		params.put("access_token", getCurrentAccessToken());
+		url = generateShopUrl(url, path, timestamp, params);
+
+		return performPostRequest(url, gson.toJson(request), TierVariationResponse.class);
 	}
 
 	public UnlistItemResponse unlistItem(Map<Long, Boolean> map) throws Exception {
@@ -380,6 +405,67 @@ public class ShopeeAPIV2Service {
 		url = generateShopUrl(url, path, timestamp, params);
 
 		return performPostRequest(url, gson.toJson(request), UpdateItemPriceResponse.class);
+	}
+
+	public GetModelListResponse getModelList(long itemId) throws Exception {
+		String path = URL_VERSION + "/product/get_model_list";
+		long timestamp = System.currentTimeMillis() / 1000L;
+		String url = endpoint + path;
+
+		Map<String, String> params = new HashMap<>();
+		params.put("access_token", getCurrentAccessToken());
+		params.put("item_id", String.valueOf(itemId));
+		url = generateShopUrl(url, path, timestamp, params);
+
+		return performGetRequest(url, GetModelListResponse.class);
+	}
+
+	public ModelResponse addModelList(long itemId, List<Model> modelList) throws Exception {
+		String path = URL_VERSION + "/product/add_model";
+		long timestamp = System.currentTimeMillis() / 1000L;
+		String url = endpoint + path;
+
+		ModelRequest request = new ModelRequest();
+		request.setModelList(modelList);
+		request.setId(itemId);
+
+		Map<String, String> params = new HashMap<>();
+		params.put("access_token", getCurrentAccessToken());
+		url = generateShopUrl(url, path, timestamp, params);
+
+		return performPostRequest(url, gson.toJson(request), ModelResponse.class);
+	}
+
+	public ModelResponse updateModelList(long itemId, List<Model> modelList) throws Exception {
+		String path = URL_VERSION + "/product/update_model";
+		long timestamp = System.currentTimeMillis() / 1000L;
+		String url = endpoint + path;
+
+		ModelRequest request = new ModelRequest();
+		request.setUpdateModelList(modelList);
+		request.setId(itemId);
+
+		Map<String, String> params = new HashMap<>();
+		params.put("access_token", getCurrentAccessToken());
+		url = generateShopUrl(url, path, timestamp, params);
+
+		return performPostRequest(url, gson.toJson(request), ModelResponse.class);
+	}
+
+	public ModelResponse deleteModel(long itemId, long modelId) throws Exception {
+		String path = URL_VERSION + "/product/delete_model";
+		long timestamp = System.currentTimeMillis() / 1000L;
+		String url = endpoint + path;
+
+		ModelRequest request = new ModelRequest();
+		request.setModelId(modelId);
+		request.setId(itemId);
+
+		Map<String, String> params = new HashMap<>();
+		params.put("access_token", getCurrentAccessToken());
+		url = generateShopUrl(url, path, timestamp, params);
+
+		return performPostRequest(url, gson.toJson(request), ModelResponse.class);
 	}
 
 	/*
@@ -480,7 +566,6 @@ public class ShopeeAPIV2Service {
 
 		Map<String, String> params = new HashMap<>();
 		params.put("access_token", getCurrentAccessToken());
-		params.put("shop_id", SHOP_ID + "");
 		url = generateShopUrl(url, path, timestamp, params);
 		return performPostFormRequest(url, "image", imageName, "application/jpg", file, AddImageResponse.class);
 	}
@@ -615,6 +700,9 @@ public class ShopeeAPIV2Service {
 			Response response = client.newCall(r).execute();
 			String json = response.body().string();
 
+			log.info("Response " + url);
+			log.info("Json: " + json);
+
 			T result = new Gson().fromJson(json, responseClass);
 			return result;
 		} catch (Exception e) {
@@ -628,6 +716,10 @@ public class ShopeeAPIV2Service {
 		try {
 			Response response = client.newCall(r).execute();
 			String json = response.body().string();
+
+			log.info("Response " + url);
+			log.info("Json: " + json);
+
 			T result = new Gson().fromJson(json, responseClass);
 			return result;
 		} catch (Exception e) {
@@ -653,6 +745,8 @@ public class ShopeeAPIV2Service {
 		try {
 			Response response = client.newCall(r).execute();
 			String json = response.body().string();
+			log.info("Response " + url);
+			log.info("Json: " + json);
 
 			T result = new Gson().fromJson(json, responseClass);
 			return result;

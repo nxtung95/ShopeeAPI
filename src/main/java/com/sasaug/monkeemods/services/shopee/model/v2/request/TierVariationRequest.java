@@ -1,4 +1,4 @@
-package com.sasaug.monkeemods.services.shopee.model.v2.submodel;
+package com.sasaug.monkeemods.services.shopee.model.v2.request;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +11,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class InitTierVariationModel {
-
-	@SerializedName("item_id")
-	public long id;
+public class TierVariationRequest extends BaseRequest {
+	@SerializedName(value = "item_id")
+	private Long itemId;
 
 	@SerializedName(value = "tier_variation")
 	public List<TierVariation> tierVariationList = new ArrayList<>();

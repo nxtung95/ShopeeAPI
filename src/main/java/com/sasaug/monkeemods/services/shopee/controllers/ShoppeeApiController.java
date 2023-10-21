@@ -4,7 +4,6 @@ import com.sasaug.monkeemods.services.shopee.ShopeeV2Service;
 import com.sasaug.monkeemods.services.shopee.model.v2.Category;
 import com.sasaug.monkeemods.services.shopee.model.v2.ItemBase;
 import com.sasaug.monkeemods.services.shopee.model.v2.ItemList;
-import com.sasaug.monkeemods.services.shopee.model.v2.response.DeleteItemResponse;
 import com.sasaug.monkeemods.services.shopee.model.v2.submodel.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,6 +96,48 @@ public class ShoppeeApiController {
 	@RequestMapping(method = RequestMethod.POST, value = "/update-item-stock")
 	public ResponseEntity<UpdateStockResponseModel> updateItemStock(@RequestBody ItemRequest rq) throws Exception {
 		UpdateStockResponseModel res = shopeeV2Service.updateItemStock(rq.itemId, rq.modelId, rq.getQuantity());
+		return ResponseEntity.ok(res);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/init-tier-variation")
+	public ResponseEntity<TierVariationModel> initTierVariation(@RequestBody TierVariationRequest rq) throws Exception {
+		TierVariationModel res = shopeeV2Service.initTierVariation(rq.getItemId(), rq.getTierVariationList(), rq.getModelList());
+		return ResponseEntity.ok(res);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/update-tier-variation")
+	public ResponseEntity<TierVariationModel> updateTierVariation(@RequestBody TierVariationRequest rq) throws Exception {
+		TierVariationModel res = shopeeV2Service.updateTierVariation(rq.getItemId(), rq.getTierVariationList(), rq.getModelList());
+		return ResponseEntity.ok(res);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/get-model-list")
+	public ResponseEntity<GetModelListResponseModel> getModelList(@RequestBody ModelRequest rq) throws Exception {
+		GetModelListResponseModel res = shopeeV2Service.getModelList(rq.getItemId());
+		return ResponseEntity.ok(res);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/add-model-list")
+	public ResponseEntity<ModelResponseModel> addModelList(@RequestBody ModelRequest rq) throws Exception {
+		ModelResponseModel res = shopeeV2Service.addModelList(rq.getItemId(), rq.getModelList());
+		return ResponseEntity.ok(res);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/update-model-list")
+	public ResponseEntity<ModelResponseModel> updateModelList(@RequestBody ModelRequest rq) throws Exception {
+		ModelResponseModel res = shopeeV2Service.updateModelList(rq.getItemId(), rq.getModelList());
+		return ResponseEntity.ok(res);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/delete-model")
+	public ResponseEntity<ModelResponseModel> deleteModel(@RequestBody ModelRequest rq) throws Exception {
+		ModelResponseModel res = shopeeV2Service.deleteModel(rq.getItemId(), rq.getModelId());
+		return ResponseEntity.ok(res);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/upload-image")
+	public ResponseEntity<AddImageResponseModel> uploadImage(@RequestBody ImageRequest rq) throws Exception {
+		AddImageResponseModel res = shopeeV2Service.uploadImage(rq.getImageUrl());
 		return ResponseEntity.ok(res);
 	}
 }

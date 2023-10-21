@@ -11,4 +11,7 @@ public class TierVariationOptionImage {
 	@SerializedName(value = "image_id")
 	public String id;
 
+	@SerializedName(value = "image_url")
+	public String imageUrl;
+
 }

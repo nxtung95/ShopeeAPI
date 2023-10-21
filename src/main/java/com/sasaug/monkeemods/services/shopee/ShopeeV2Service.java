@@ -9,18 +9,16 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.sasaug.monkeemods.services.shopee.model.v1.AddItemAttribute;
-import com.sasaug.monkeemods.services.shopee.model.v1.ItemData;
-import com.sasaug.monkeemods.services.shopee.model.v1.response.UpdateItemStockResponse;
 import com.sasaug.monkeemods.services.shopee.model.v2.*;
 import com.sasaug.monkeemods.services.shopee.model.v2.enumeration.ItemStatus;
 import com.sasaug.monkeemods.services.shopee.model.v2.response.*;
 import com.sasaug.monkeemods.services.shopee.model.v2.submodel.*;
+import com.sasaug.monkeemods.services.shopee.utils.IO;
+import com.sasaug.monkeemods.services.shopee.utils.NetUtils;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.imageio.ImageIO;
 
 @Service
 @Slf4j
@@ -236,17 +234,75 @@ public class ShopeeV2Service {
 		return null;
 	}
 
+	public GetModelListResponseModel getModelList(long itemId) throws Exception {
+		GetModelListResponse resp = shopeeAPIV2Service.getModelList(itemId);
+		if (resp.error == null || resp.error.isEmpty()) {
+			return resp.getResponse();
+		}
+		return null;
+	}
+
+	public TierVariationModel initTierVariation(Long itemId, List<TierVariation> tierVariations, List<Model> modelList) throws Exception {
+		TierVariationResponse resp = shopeeAPIV2Service.initItemTierVariation(itemId, tierVariations, modelList);
+		if (resp.error == null || resp.error.isEmpty()) {
+			return resp.getResponse();
+		}
+		return null;
+	}
+
+	public TierVariationModel updateTierVariation(Long itemId, List<TierVariation> tierVariations, List<Model> modelList) throws Exception {
+		TierVariationResponse resp = shopeeAPIV2Service.updateItemTierVariation(itemId, tierVariations, modelList);
+		if (resp.error == null || resp.error.isEmpty()) {
+			resp.getResponse().setModelList(modelList);
+			resp.getResponse().setTierVariationList(tierVariations);
+			resp.getResponse().setId(itemId);
+			return resp.getResponse();
+		}
+		return null;
+	}
+
+	public ModelResponseModel addModelList(long itemId, List<Model> modelList) throws Exception {
+		ModelResponse resp = shopeeAPIV2Service.addModelList(itemId, modelList);
+		if (resp.error == null || resp.error.isEmpty()) {
+			return resp.getResponse();
+		}
+		return null;
+	}
+
+	public ModelResponseModel updateModelList(long itemId, List<Model> modelList) throws Exception {
+		ModelResponse resp = shopeeAPIV2Service.updateModelList(itemId, modelList);
+		if (resp.error == null || resp.error.isEmpty()) {
+			if (resp.getResponse() == null) {
+				ModelResponseModel responseModel = new ModelResponseModel();
+				responseModel.setModel(modelList);
+				return responseModel;
+			}
+		}
+		return null;
+	}
+
+	public ModelResponseModel deleteModel(long itemId, long modelId) throws Exception {
+		ModelResponse resp = shopeeAPIV2Service.deleteModel(itemId, modelId);
+		if (resp.error == null || resp.error.isEmpty()) {
+			ModelResponseModel responseModel = new ModelResponseModel();
+			responseModel.setModelId(modelId);
+			responseModel.setItemId(itemId);
+			return responseModel;
+		}
+		return null;
+	}
+
 	//MEDIA SPACE
-//	public AddImageResponseModel uploadImage(String url) throws Exception {
-//		byte[] data = NetUtils.getBin(url);
-//		IO.write("temp.jpg", data);
-//		File file = new File("temp.jpg");
-//		AddImageResponse resp = shopeeAPIV2Service.addImage("temp", new File("temp.jpg"));
-//		file.delete();
-//		if (resp.error == null || resp.error.isEmpty()) {
-//			return resp.getResponse();
-//		}
-//
-//		throw new Exception(resp.getError());
-//	}
+	public AddImageResponseModel uploadImage(String url) throws Exception {
+		byte[] data = NetUtils.getBin(url);
+		IO.write("temp.jpg", data);
+		File file = new File("temp.jpg");
+		AddImageResponse resp = shopeeAPIV2Service.addImage("temp", new File("temp.jpg"));
+		file.delete();
+		if (resp.error == null || resp.error.isEmpty()) {
+			return resp.getResponse();
+		}
+
+		throw new Exception(resp.getError());
+	}
 }
