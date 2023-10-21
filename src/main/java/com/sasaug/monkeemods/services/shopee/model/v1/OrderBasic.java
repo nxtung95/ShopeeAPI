@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 public class OrderBasic {
-	@SerializedName(value = "ordersn")
+	@SerializedName(value = "order_sn")
 	public String id;
 
 	@SerializedName(value = "order_status")

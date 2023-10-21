@@ -4,12 +4,17 @@ import com.sasaug.monkeemods.services.shopee.ShopeeV2Service;
 import com.sasaug.monkeemods.services.shopee.model.v2.Category;
 import com.sasaug.monkeemods.services.shopee.model.v2.ItemBase;
 import com.sasaug.monkeemods.services.shopee.model.v2.ItemList;
+import com.sasaug.monkeemods.services.shopee.model.v2.enumeration.OrderStatus;
 import com.sasaug.monkeemods.services.shopee.model.v2.submodel.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalField;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -138,6 +143,20 @@ public class ShoppeeApiController {
 	@RequestMapping(method = RequestMethod.POST, value = "/upload-image")
 	public ResponseEntity<AddImageResponseModel> uploadImage(@RequestBody ImageRequest rq) throws Exception {
 		AddImageResponseModel res = shopeeV2Service.uploadImage(rq.getImageUrl());
+		return ResponseEntity.ok(res);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/get-order-list")
+	public ResponseEntity<GetOrdersListResponseModel> getOrderList(@RequestBody OrderRequest rq) throws Exception {
+		Long createTime = LocalDate.now().minusDays(15).toEpochDay();
+		Long toTime = LocalDate.now().toEpochDay();
+		GetOrdersListResponseModel res = shopeeV2Service.getOrderList(rq.getCursor(), rq.getPageSize(), createTime, toTime, OrderStatus.ALL);
+		return ResponseEntity.ok(res);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/get-order-detail")
+	public ResponseEntity<GetOrderDetailResponseModel> getOrderDetail(@RequestBody OrderRequest rq) throws Exception {
+		GetOrderDetailResponseModel res = shopeeV2Service.getOrderDetails(rq.getOrderIds());
 		return ResponseEntity.ok(res);
 	}
 }

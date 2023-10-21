@@ -1,16 +1,12 @@
 package com.sasaug.monkeemods.services.shopee;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.sasaug.monkeemods.services.shopee.model.v1.AddItemAttribute;
 import com.sasaug.monkeemods.services.shopee.model.v2.*;
 import com.sasaug.monkeemods.services.shopee.model.v2.enumeration.ItemStatus;
+import com.sasaug.monkeemods.services.shopee.model.v2.enumeration.OrderStatus;
+import com.sasaug.monkeemods.services.shopee.model.v2.enumeration.ShippingDocumentType;
 import com.sasaug.monkeemods.services.shopee.model.v2.response.*;
 import com.sasaug.monkeemods.services.shopee.model.v2.submodel.*;
 import com.sasaug.monkeemods.services.shopee.utils.IO;
@@ -19,6 +15,12 @@ import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -304,5 +306,45 @@ public class ShopeeV2Service {
 		}
 
 		throw new Exception(resp.getError());
+	}
+
+	public GetOrdersListResponseModel getOrderList(String cursor, int pageSize, Long createTimeFrom, Long createTimeTo, OrderStatus orderStatus) throws Exception {
+		GetOrdersListResponse resp = shopeeAPIV2Service.getOrdersList(cursor, pageSize, createTimeFrom, createTimeTo, orderStatus);
+		if (resp.error == null || resp.error.isEmpty()) {
+			return resp.getResponse();
+		}
+		return null;
+	}
+
+	public GetOrderDetailResponseModel getOrderDetails(List<String> orderIds) throws Exception {
+		GetOrderDetailsResponse resp = shopeeAPIV2Service.getOrderDetails(orderIds);
+		if (resp.error == null || resp.error.isEmpty()) {
+			return resp.getResponse();
+		}
+		return null;
+	}
+
+	public BaseResponse shipOrder(String orderId, Pickup pickup, Dropoff dropoff) throws Exception {
+		BaseResponse resp = shopeeAPIV2Service.shipOrder(orderId, pickup, dropoff);
+		if (resp.error == null || resp.error.isEmpty()) {
+			return resp;
+		}
+		return null;
+	}
+
+	public GetTrackingNumberResponseModel getTrackingNumber(String orderId) throws Exception {
+		GetTrackingNumberResponse resp = shopeeAPIV2Service.getTrackingNumber(orderId);
+		if (resp.error == null || resp.error.isEmpty()) {
+			return resp.getResponse();
+		}
+		return null;
+	}
+
+	public CreateShippingDocumentResponseModel createShippingDocument(String orderId, String trackingNumber, ShippingDocumentType shippingDocumentType) throws Exception {
+		CreateShippingDocumentResponse resp = shopeeAPIV2Service.createShippingDocument(orderId, trackingNumber, shippingDocumentType);
+		if (resp.error == null || resp.error.isEmpty()) {
+			return resp.getResponse();
+		}
+		return null;
 	}
 }

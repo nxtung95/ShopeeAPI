@@ -7,9 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OrderBasic {
-	@SerializedName(value = "ordersn")
-	public String id;
+	@SerializedName(value = "order_sn")
+	public String orderSn;
 
 	@SerializedName(value = "order_status")
-	public String status;
+	public String orderStatus;
 }

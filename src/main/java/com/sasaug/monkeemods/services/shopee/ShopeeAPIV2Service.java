@@ -7,6 +7,7 @@ import com.sasaug.monkeemods.services.shopee.helper.RequestUrlBuilder;
 import com.sasaug.monkeemods.services.shopee.model.v2.*;
 import com.sasaug.monkeemods.services.shopee.model.v2.enumeration.ItemStatus;
 import com.sasaug.monkeemods.services.shopee.model.v2.enumeration.OrderStatus;
+import com.sasaug.monkeemods.services.shopee.model.v2.enumeration.ShippingDocumentType;
 import com.sasaug.monkeemods.services.shopee.model.v2.request.*;
 import com.sasaug.monkeemods.services.shopee.model.v2.response.*;
 import com.sasaug.monkeemods.services.shopee.model.v2.submodel.*;
@@ -479,12 +480,14 @@ public class ShopeeAPIV2Service {
 
 		Map<String, String> params = new HashMap<>();
 		params.put("access_token", getCurrentAccessToken());
-		params.put("shop_id", SHOP_ID + "");
+		params.put("time_range_field", "create_time");
 		params.put("page_size", pageSize + "");
 		params.put("cursor", cursor);
-		params.put("create_time_from", createTimeFrom + "");
-		params.put("create_time_to", createTimeTo + "");
-		params.put("order_status", orderStatus.toString());
+		params.put("time_from", createTimeFrom + "");
+		params.put("time_to", createTimeTo + "");
+		if (!orderStatus.toString().equals(OrderStatus.ALL.toString())) {
+			params.put("order_status", orderStatus.toString());
+		}
 
 		url = generateShopUrl(url, path, timestamp, params);
 
@@ -514,7 +517,7 @@ public class ShopeeAPIV2Service {
 		return performGetRequest(url, GetOrderDetailsResponse.class);
 	}
 
-	public BaseResponse shipOrder(String orderId, Dropoff dropoff) {
+	public BaseResponse shipOrder(String orderId, Pickup pickup, Dropoff dropoff) {
 		String path = URL_VERSION + "/logistics/ship_order";
 		String url = endpoint + path;
 		ShipOrderRequest request = new ShipOrderRequest();
@@ -522,6 +525,7 @@ public class ShopeeAPIV2Service {
 		request.setPartnerId(PARTNER_ID);
 		request.setOrderId(orderId);
 		request.setDropoff(dropoff);
+		request.setPickup(pickup);
 
 		return performPostRequest(url, gson.toJson(request), BaseResponse.class);
 	}
@@ -534,23 +538,31 @@ public class ShopeeAPIV2Service {
 
 		Map<String, String> params = new HashMap<>();
 		params.put("access_token", getCurrentAccessToken());
-		params.put("shop_id", SHOP_ID + "");
 		params.put("order_sn", orderId);
 		url = generateShopUrl(url, path, timestamp, params);
 
 		return performGetRequest(url, GetTrackingNumberResponse.class);
 	}
 
-	public CreateShippingDocumentResponse createShippingDocument(String orderId) throws Exception {
+	public CreateShippingDocumentResponse createShippingDocument(String orderId, String trackingNumber, ShippingDocumentType shippingDocumentType) throws Exception {
 		String path = URL_VERSION + "/logistics/create_shipping_document";
 		String url = endpoint + path;
+
+		long timestamp = System.currentTimeMillis() / 1000L;
+
+		Map<String, String> params = new HashMap<>();
+		params.put("access_token", getCurrentAccessToken());
 
 		CreateShippingDocumentRequest request = new CreateShippingDocumentRequest();
 		request.setShopId(SHOP_ID);
 		request.setPartnerId(PARTNER_ID);
 		CreateShippingDocumentRequestModel model = new CreateShippingDocumentRequestModel();
 		model.setOrderId(orderId);
+		model.setTrackingNumber(trackingNumber);
+		model.setShippingDocumentType(shippingDocumentType.toString());
 		request.getOrderList().add(model);
+
+		url = generateShopUrl(url, path, timestamp, params);
 
 		return performPostRequest(url, gson.toJson(request), CreateShippingDocumentResponse.class);
 	}
