@@ -10,11 +10,11 @@ import com.sasaug.monkeemods.services.shopee.model.v2.response.*;
 import com.sasaug.monkeemods.services.shopee.model.v2.submodel.*;
 import com.sasaug.monkeemods.services.shopee.utils.IO;
 import com.sasaug.monkeemods.services.shopee.utils.NetUtils;
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -340,6 +340,22 @@ public class ShopeeV2Service {
 		CreateShippingDocumentResponse resp = shopeeAPIV2Service.createShippingDocument(orderId, trackingNumber, shippingDocumentType);
 		if (resp.error == null || resp.error.isEmpty()) {
 			return resp.getResponse();
+		}
+		return null;
+	}
+
+	public GetShippingDocumentResonseModel getShippingDocument(List<ShippingDocumentOrderRq> orderRqList) throws Exception {
+		GetShippingDocumentResponse resp = shopeeAPIV2Service.getShippingDocument(orderRqList);
+		if (resp.error == null || resp.error.isEmpty()) {
+			return resp.getResponse();
+		}
+		return null;
+	}
+
+	public File downloadShippingDocument(ShippingDocumentType shippingDocumentType, List<ShippingDocumentOrderRq> orderRqList) throws Exception {
+		DownloadShippingDocumentResponse resp = shopeeAPIV2Service.downloadShippingDocument(shippingDocumentType, orderRqList);
+		if (resp.error == null || resp.error.isEmpty()) {
+			return resp.getWaybill();
 		}
 		return null;
 	}

@@ -67,14 +67,14 @@ public class ShoppeeApiController {
 	@RequestMapping(method = RequestMethod.POST, value = "/add-item")
 	public ResponseEntity<AddItemResponseModel> addItem(@RequestBody AddItemRequest rq) throws Exception {
 		AddItemResponseModel res = shopeeV2Service.addItem(rq.getName(), rq.getDescription(), rq.getSku(), rq.getPrice(), rq.getStock(), rq.getWeight(),
-				rq.getLength(), rq.getWidth(), rq.getHeight(), rq.getBrand(), Arrays.asList(rq.getImages().split(",")).stream().toList());
+				rq.getLength(), rq.getWidth(), rq.getHeight(), rq.getBrand(), Arrays.asList(rq.getImages().split(",")).stream().collect(Collectors.toList()));
 		return ResponseEntity.ok(res);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/update-item")
 	public ResponseEntity<UpdateItemResponseModel> updateItem(@RequestBody UpdateItemRequest rq) throws Exception {
 		UpdateItemResponseModel res = shopeeV2Service.updateItem(rq.getItemId(), rq.getName(), rq.getDescription(), rq.getWeight(),
-				rq.getLength(), rq.getWidth(), rq.getHeight(), rq.getBrand(), Arrays.asList(rq.getImages().split(",")).stream().toList());
+				rq.getLength(), rq.getWidth(), rq.getHeight(), rq.getBrand(), Arrays.asList(rq.getImages().split(",")).stream().collect(Collectors.toList()));
 		return ResponseEntity.ok(res);
 	}
 

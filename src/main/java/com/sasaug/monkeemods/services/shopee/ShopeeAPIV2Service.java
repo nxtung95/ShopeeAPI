@@ -11,7 +11,6 @@ import com.sasaug.monkeemods.services.shopee.model.v2.enumeration.ShippingDocume
 import com.sasaug.monkeemods.services.shopee.model.v2.request.*;
 import com.sasaug.monkeemods.services.shopee.model.v2.response.*;
 import com.sasaug.monkeemods.services.shopee.model.v2.submodel.*;
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -20,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -565,6 +565,41 @@ public class ShopeeAPIV2Service {
 		url = generateShopUrl(url, path, timestamp, params);
 
 		return performPostRequest(url, gson.toJson(request), CreateShippingDocumentResponse.class);
+	}
+
+	public GetShippingDocumentResponse getShippingDocument(List<ShippingDocumentOrderRq> orderList) throws Exception {
+		String path = URL_VERSION + "/logistics/get_shipping_document_result";
+		String url = endpoint + path;
+
+		long timestamp = System.currentTimeMillis() / 1000L;
+
+		Map<String, String> params = new HashMap<>();
+		params.put("access_token", getCurrentAccessToken());
+
+		GetShippingDocumentRequest request = new GetShippingDocumentRequest();
+		request.setOrderList(orderList);
+
+		url = generateShopUrl(url, path, timestamp, params);
+
+		return performPostRequest(url, gson.toJson(request), GetShippingDocumentResponse.class);
+	}
+
+	public DownloadShippingDocumentResponse downloadShippingDocument(ShippingDocumentType shippingDocumentType, List<ShippingDocumentOrderRq> orderList) throws Exception {
+		String path = URL_VERSION + "/logistics/download_shipping_document";
+		String url = endpoint + path;
+
+		long timestamp = System.currentTimeMillis() / 1000L;
+
+		Map<String, String> params = new HashMap<>();
+		params.put("access_token", getCurrentAccessToken());
+
+		DownloadShippingDocumentRequest request = new DownloadShippingDocumentRequest();
+		request.setShippingDocumentType(shippingDocumentType.toString());
+		request.setOrderList(orderList);
+
+		url = generateShopUrl(url, path, timestamp, params);
+
+		return performPostRequest(url, gson.toJson(request), DownloadShippingDocumentResponse.class);
 	}
 
 

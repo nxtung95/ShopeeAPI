@@ -1,12 +1,10 @@
 package com.sasaug.monkeemods.services.shopee.model.v2;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gson.annotations.SerializedName;
-import com.sasaug.monkeemods.services.shopee.model.v1.ItemVariation;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
